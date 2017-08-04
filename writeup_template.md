@@ -1,9 +1,5 @@
 # **Finding Lane Lines on the Road** 
 
-## Writeup Template
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file. But feel free to use some other method and submit a pdf if you prefer.
-
 ---
 
 **Finding Lane Lines on the Road**
@@ -21,27 +17,27 @@ The goals / steps of this project are the following:
 
 ### Reflection
 
-### 1. Describe your pipeline. As part of the description, explain how you modified the draw_lines() function.
+### 1. Pipeline description.
 
-My pipeline consisted of 5 steps. First, I converted the images to grayscale, then I .... 
-
-In order to draw a single line on the left and right lanes, I modified the draw_lines() function by ...
-
-If you'd like to include images to show how the pipeline works, here is how to include an image: 
-
-![alt text][image1]
-
-
-### 2. Identify potential shortcomings with your current pipeline
-
-
-One potential shortcoming would be what would happen when ... 
-
-Another shortcoming could be ...
+My pipeline, coded in the "draw_lines_pipeline" consist of 8 steps:
+1. The original image is converted to grayscale.
+2. The grayscale image is smoothed with Guassian Smoothing to remove lesser edges.
+3. Canny edge-detection algorithm is applied to the blurred image.
+4. The area os interest for the next step is limited to  only the portion of the image showing the road in front, all the rst is blackened.
+5. Straight lines are detected using Hough Transform. The output of this stage is a number of lines described by their endpoints.
+6. All the detected lines are sorted into bins along with other similar lines. Similarity is assessd by comparing and updating m (actually, angle, to have a linear quantity) and b coefficients. There's no predefined limit to the number of bins, so in principle no limit to the number of lines/lanes the pipeline can detect (i.e. only left and right).
+7. For each of these bins, an "average line" is computed.
+8. The lines obtained are drawn as an overlay on the original image.
 
 
-### 3. Suggest possible improvements to your pipeline
+### 2. Potential shortcomings with my current pipeline
 
-A possible improvement would be to ...
+* If the region of interested is expanded, it's easy to detect the side of the road as a line. This can actually be positive, but then there's a need to define it as "edge of the road" and not as a line.
+* The line drawing funciton cannot deal with horizontal lines. It can be obviously improved.
 
-Another potential improvement could be to ...
+
+### 3. Possible improvements to my pipeline
+
+* There no reason to process the whole image (i.e. grayscaling, applying gaussian smoothing or Canny), if only the region of interest is then considered. This could speed up the code.
+* Probably a more efficient sorting algorithm can be used to sort all the lines detected by the Hough transform into bins.
+* Not treating each frame of the video separately but using previous knowledge (i.e. the location of the lines in the previous N frames, for example by averaging) can result in smoother line detection and reduce flickering.
